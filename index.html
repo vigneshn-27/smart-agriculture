@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 Smart Agriculture Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d6a4f;
+            --primary-dark: #1b4332;
+            --primary-light: #40916c;
+            --accent: #f4a261;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #52b788;
+            --warning: #f4a261;
+            --danger: #e76f51;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .tab:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px rgba(45, 106, 79, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid var(--primary-light);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #e76f51;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .result-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            max-width: 80%;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .message.user {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant {
+            background: white;
+            border: 2px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-top: 2px solid var(--border);
+        }
+
+        .chat-input-container input {
+            flex: 1;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .loader {
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+            border-left: 5px solid var(--success);
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #842029;
+            border-left: 5px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #664d03;
+            border-left: 5px solid var(--warning);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        .example-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .example-btn {
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌾 Smart Agriculture Assistant</h1>
+            <p>AI-Powered Soil Analysis & Crop Recommendation System</p>
+        </header>
+
+        <div id="sessionStatus" class="hidden"></div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('upload')">📤 Upload Soil Image</div>
+            <div class="tab" onclick="switchTab('analysis')">📊 Soil Analysis</div>
+            <div class="tab" onclick="switchTab('crops')">🌾 Crop Recommendations</div>
+            <div class="tab" onclick="switchTab('chat')">💬 AI Chat Assistant</div>
+            <div class="tab" onclick="switchTab('fertilizer')">💊 Fertilizer Calculator</div>
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="upload-tab" class="tab-content active">
+            <div class="card">
+                <h2>Upload Soil Image for Analysis</h2>
+                <div class="form-group">
+                    <label for="soilImage">Select Soil Image</label>
+                    <input type="file" id="soilImage" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location (Optional - for weather data)</label>
+                    <input type="text" id="location" placeholder="e.g., Mumbai, Maharashtra">
+                </div>
+                <div class="form-group">
+                    <label for="moisture">Soil Moisture (%) - Optional</label>
+                    <input type="number" id="moisture" placeholder="e.g., 45" min="0" max="100">
+                </div>
+                <button class="btn btn-primary" onclick="uploadAndAnalyze()">🔬 Analyze Soil</button>
+                <div id="uploadLoader" class="hidden">
+                    <div class="loader"></div>
+                    <p style="text-align: center;">Analyzing soil sample...</p>
+                </div>
+                <div id="uploadResult"></div>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis-tab" class="tab-content">
+            <div class="card">
+                <h2>Soil Analysis Report</h2>
+                <div id="analysisContent">
+                    <p class="alert alert-warning">Please upload a soil image first to see the analysis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crops Tab -->
+        <div id="crops-tab" class="tab-content">
+            <div class="card">
+                <h2>🌾 Dynamic Crop Recommendations</h2>
+                <div id="cropsContent">
+                    <p class="alert alert-warning">Please upload a soil image first to get crop recommendations.</p>
+                </div>
+                <button class="btn btn-primary hidden" id="getCropsBtn" onclick="getCropRecommendations()">
+                    🌱 Get Crop Recommendations
+                </button>
+                <div id="cropsLoader" class="hidden">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-content">
+            <div class="card">
+                <h2>💬 AI Agricultural Assistant</h2>
+                <p style="margin-bottom: 15px; color: var(--text-light);">Ask questions about crops, farming practices, and soil management.</p>
+                
+                <div class="example-questions">
+                    <button class="example-btn" onclick="sendExample('What crops suit this soil in monsoon season?')">🌧️ Monsoon crops?</button>
+                    <button class="example-btn" onclick="sendExample('Suggest high-value crops for small farms')">💰 High-value crops?</button>
+                    <button class="example-btn" onclick="sendExample('Best drought-resistant crops?')">🌵 Drought-resistant?</button>
+                    <button class="example-btn" onclick="sendExample('What vegetables can I grow?')">🥬 Vegetables?</button>
+                </div>
+
+                <div class="chat-container" style="margin-top: 20px;">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            Hello! I'm your AI agricultural assistant. Upload a soil image first, then ask me anything about suitable crops, farming techniques, or soil management! 🌾
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Ask about crops, farming practices..." 
+                               onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fertilizer Tab -->
+        <div id="fertilizer-tab" class="tab-content">
+            <div class="card">
+                <h2>💊 Fertilizer Quantity Calculator</h2>
+                <div id="fertilizerForm">
+                    <div class="grid">
+                        <div class="form-group">
+                            <label for="landSize">Land Size</label>
+                            <input type="number" id="landSize" placeholder="e.g., 5" min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="landUnit">Unit</label>
+                            <select id="landUnit">
+                                <option value="acre">Acre</option>
+                                <option value="hectare">Hectare</option>
+                                <option value="sqft">Square Feet</option>
+                                <option value="sqm">Square Meters</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 20px 0; color: var(--primary);">Current Soil NPK Values (kg/ha)</h3>
+                    <p style="margin-bottom: 15px; color: var(--text-light);">If you don't have test results, use default values</p>
+
+                    <div class="grid">
+                        <div class="form-group">
+                            <label for="nValue">Nitrogen (N)</label>
+                            <input type="number" id="nValue" value="50" min="0" max="250" step="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="pValue">Phosphorus (P)</label>
+                            <input type="number" id="pValue" value="20" min="0" max="150" step="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="kValue">Potassium (K)</label>
+                            <input type="number" id="kValue" value="30" min="0" max="150" step="5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fertilizerSelect">Select Fertilizer</label>
+                        <select id="fertilizerSelect"></select>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="calculateFertilizer()">📊 Calculate Fertilizer Quantity</button>
+                </div>
+                <div id="fertilizerLoader" class="hidden">
+                    <div class="loader"></div>
+                </div>
+                <div id="fertilizerResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let sessionId = null;
+        let chatHistory = [];
+        let currentSoilData = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Upload and analyze soil
+        async function uploadAndAnalyze() {
+            const fileInput = document.getElementById('soilImage');
+            const location = document.getElementById('location').value;
+            const moisture = document.getElementById('moisture').value;
+
+            if (!fileInput.files[0]) {
+                alert('Please select an image first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+            if (location) formData.append('location', location);
+            if (moisture) formData.append('moisture', moisture);
+
+            document.getElementById('uploadLoader').classList.remove('hidden');
+            document.getElementById('uploadResult').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/analyze-soil`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                sessionId = data.session_id;
+                currentSoilData = data;
+
+                // Show success message
+                document.getElementById('uploadResult').innerHTML = `
+                    <div class="alert alert-success" style="margin-top: 20px;">
+                        ✅ Soil analysis completed successfully!<br>
+                        <strong>Detected Soil:</strong> ${data.detected_soil}<br>
+                        <strong>Soil Health:</strong> ${data.soil_score}/100 (${data.soil_health_label})
+                    </div>
+                    <img src="data:image/jpeg;base64,${data.image_base64}" class="image-preview" alt="Analyzed Soil">
+                `;
+
+                // Update session status
+                document.getElementById('sessionStatus').innerHTML = `
+                    <div class="alert alert-success">
+                        📊 Session Active | Soil Type: <strong>${data.detected_soil}</strong>
+                        <span class="badge badge-success">${data.soil_health_label}</span>
+                    </div>
+                `;
+                document.getElementById('sessionStatus').classList.remove('hidden');
+
+                // Enable other tabs
+                document.getElementById('getCropsBtn').classList.remove('hidden');
+
+                // Update analysis tab
+                updateAnalysisTab(data);
+
+                // Load fertilizers
+                loadFertilizers();
+
+            } catch (error) {
+                document.getElementById('uploadResult').innerHTML = `
+                    <div class="alert alert-error" style="margin-top: 20px;">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                document.getElementById('uploadLoader').classList.add('hidden');
+            }
+        }
+
+        // Update analysis tab
+        function updateAnalysisTab(data) {
+            const healthBadge = data.soil_health_label === 'Excellent' ? 'badge-success' : 
+                               data.soil_health_label === 'Good' ? 'badge-success' :
+                               data.soil_health_label === 'Moderate' ? 'badge-warning' : 'badge-danger';
+
+            const tempDisplay = data.weather_info?.temperature ? `${data.weather_info.temperature}°C` : 'N/A';
+            const humidityDisplay = data.weather_info?.humidity ? `${data.weather_info.humidity}%` : 'N/A';
+            const weatherDisplay = data.weather_info?.weather || 'N/A';
+            const locationDisplay = data.weather_info?.name || 'No location data';
+
+            document.getElementById('analysisContent').innerHTML = `
+                ${data.weather_info?.error ? `
+                <div class="alert alert-warning">
+                    ⚠️ ${data.weather_info.error}
+                </div>
+                ` : ''}
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${data.detected_soil}</div>
+                        <div class="stat-label">Soil Type</div>
+                        <small style="color: var(--text-light);">Confidence: ${data.confidence || 'N/A'}</small>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.soil_score}/100</div>
+                        <div class="stat-label">Soil Health <span class="badge ${healthBadge}">${data.soil_health_label}</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${tempDisplay}</div>
+                        <div class="stat-label">Temperature</div>
+                        <small style="color: var(--text-light);">${locationDisplay}</small>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${humidityDisplay}</div>
+                        <div class="stat-label">Humidity</div>
+                    </div>
+                </div>
+
+                <div class="grid" style="margin-top: 30px;">
+                    <div class="result-card">
+                        <h3>📸 Image Features</h3>
+                        <div class="result-item">
+                            <span class="result-label">Mean Intensity:</span>
+                            <span class="result-value">${data.features['Mean Intensity']}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Std Deviation:</span>
+                            <span class="result-value">${data.features['Std Deviation']}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Contrast:</span>
+                            <span class="result-value">${data.features['Contrast']}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Homogeneity:</span>
+                            <span class="result-value">${data.features['Homogeneity']}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Edge Density:</span>
+                            <span class="result-value">${data.features['Edge Density']}</span>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>🌤️ Weather Information</h3>
+                        ${data.weather_info && !data.weather_info.error && data.weather_info.name ? `
+                        <div class="result-item">
+                            <span class="result-label">Location:</span>
+                            <span class="result-value">${data.weather_info.name}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Temperature:</span>
+                            <span class="result-value">${data.weather_info.temperature}°C</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Humidity:</span>
+                            <span class="result-value">${data.weather_info.humidity}%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Conditions:</span>
+                            <span class="result-value">${data.weather_info.weather}</span>
+                        </div>
+                        ` : `
+                        <p style="color: var(--text-light); padding: 10px;">
+                            ${data.weather_info?.error || 'No weather data available. Enter a location like "Mumbai, India" or "Bangalore, Karnataka" when uploading.'}
+                        </p>
+                        `}
+                    </div>
+                </div>
+
+                ${data.detection_method ? `
+                <div class="alert alert-success" style="margin-top: 20px;">
+                    🔬 Detection Method: <strong>${data.detection_method}</strong>
+                    ${data.confidence ? ` | Confidence: <strong>${(data.confidence * 100).toFixed(1)}%</strong>` : ''}
+                </div>
+                ` : ''}
+
+                <img src="data:image/jpeg;base64,${data.image_base64}" class="image-preview" alt="Analyzed Soil" style="margin-top: 30px;">
+            `;
+        }
+
+        // Get crop recommendations
+        async function getCropRecommendations() {
+            if (!sessionId) {
+                alert('Please upload a soil image first');
+                return;
+            }
+
+            document.getElementById('cropsLoader').classList.remove('hidden');
+            document.getElementById('cropsContent').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/crop-recommendations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                document.getElementById('cropsContent').innerHTML = `
+                    <div class="result-card">
+                        <h3>🌾 Recommended Crops for ${currentSoilData.detected_soil}</h3>
+                        <div style="white-space: pre-wrap; line-height: 1.8;">${data.recommendations}</div>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('cropsContent').innerHTML = `
+                    <div class="alert alert-error">❌ Error: ${error.message}</div>
+                `;
+            } finally {
+                document.getElementById('cropsLoader').classList.add('hidden');
+            }
+        }
+
+        // Chat functions
+        function sendExample(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            if (!sessionId) {
+                alert('Please upload a soil image first to activate the chat assistant');
+                return;
+            }
+
+            // Add user message to chat
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Add loading indicator
+            messagesDiv.innerHTML += `<div class="message assistant" id="tempLoader">Thinking... 🤔</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        message: message,
+                        history: chatHistory
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remove loader
+                document.getElementById('tempLoader').remove();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Add assistant response
+                messagesDiv.innerHTML += `<div class="message assistant">${data.response}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                // Update history
+                chatHistory.push({ user: message, assistant: data.response });
+
+            } catch (error) {
+                document.getElementById('tempLoader').remove();
+                messagesDiv.innerHTML += `<div class="message assistant" style="background: #f8d7da;">❌ Error: ${error.message}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        // Load fertilizers
+        async function loadFertilizers() {
+            try {
+                const response = await fetch(`${API_BASE}/fertilizers`);
+                const fertilizers = await response.json();
+
+                const select = document.getElementById('fertilizerSelect');
+                select.innerHTML = '';
+
+                for (const [name, info] of Object.entries(fertilizers)) {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = `${name} (N:${info.N}%, P:${info.P}%, K:${info.K}%) - ₹${info.price_per_kg}/kg`;
+                    select.appendChild(option);
+                }
+            } catch (error) {
+                console.error('Error loading fertilizers:', error);
+            }
+        }
+
+        // Calculate fertilizer
+        async function calculateFertilizer() {
+            if (!sessionId) {
+                alert('Please upload a soil image first');
+                return;
+            }
+
+            const landSize = document.getElementById('landSize').value;
+            const landUnit = document.getElementById('landUnit').value;
+            const n = document.getElementById('nValue').value;
+            const p = document.getElementById('pValue').value;
+            const k = document.getElementById('kValue').value;
+            const fertilizer = document.getElementById('fertilizerSelect').value;
+
+            if (!landSize || landSize <= 0) {
+                alert('Please enter a valid land size');
+                return;
+            }
+
+            document.getElementById('fertilizerLoader').classList.remove('hidden');
+            document.getElementById('fertilizerResult').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/calculate-fertilizer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        land_size: parseFloat(landSize),
+                        land_unit: landUnit,
+                        n: parseFloat(n),
+                        p: parseFloat(p),
+                        k: parseFloat(k),
+                        fertilizer: fertilizer
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                const result = data.result;
+                const avgCoverage = (result.coverage_percentage.N + result.coverage_percentage.P + result.coverage_percentage.K) / 3;
+
+                document.getElementById('fertilizerResult').innerHTML = `
+                    <div style="margin-top: 30px;">
+                        <div class="stat-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${result.total_quantity_kg} kg</div>
+                                <div class="stat-label">Total Quantity</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${result.total_quantity_bags}</div>
+                                <div class="stat-label">Bags (50kg each)</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">₹${result.total_cost_inr}</div>
+                                <div class="stat-label">Estimated Cost</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${result.application_rate_kg_per_ha}</div>
+                                <div class="stat-label">kg per hectare</div>
+                            </div>
+                        </div>
+
+                        <div class="grid" style="margin-top: 30px;">
+                            <div class="result-card">
+                                <h3>📊 NPK Deficiency Analysis</h3>
+                                <div class="result-item">
+                                    <span class="result-label">Nitrogen (N):</span>
+                                    <span class="result-value">${data.deficiency.N} kg/ha</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Phosphorus (P):</span>
+                                    <span class="result-value">${data.deficiency.P} kg/ha</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Potassium (K):</span>
+                                    <span class="result-value">${data.deficiency.K} kg/ha</span>
+                                </div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>💊 Nutrients Supplied</h3>
+                                <div class="result-item">
+                                    <span class="result-label">Nitrogen (N):</span>
+                                    <span class="result-value">${result.nutrients_supplied.N} kg (${result.coverage_percentage.N}%)</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Phosphorus (P):</span>
+                                    <span class="result-value">${result.nutrients_supplied.P} kg (${result.coverage_percentage.P}%)</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Potassium (K):</span>
+                                    <span class="result-value">${result.nutrients_supplied.K} kg (${result.coverage_percentage.K}%)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${avgCoverage < 80 ? `
+                        <div class="alert alert-warning" style="margin-top: 20px;">
+                            💡 <strong>Tip:</strong> The selected fertilizer provides ${avgCoverage.toFixed(1)}% average coverage. 
+                            Consider using a combination of fertilizers for better nutrient balance.
+                        </div>
+                        ` : ''}
+
+                        <div class="alert alert-success" style="margin-top: 20px;">
+                            <strong>Recommendation Summary:</strong><br>
+                            For your <strong>${landSize} ${landUnit}</strong> (${data.land_hectares} hectares) of <strong>${currentSoilData.detected_soil}</strong>, 
+                            you need <strong>${result.total_quantity_kg} kg</strong> of <strong>${result.fertilizer_name}</strong> 
+                            at an estimated cost of <strong>₹${result.total_cost_inr}</strong>.
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('fertilizerResult').innerHTML = `
+                    <div class="alert alert-error" style="margin-top: 20px;">
+        c                ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                document.getElementById('fertilizerLoader').classList.add('hidden');
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            console.log('Smart Agriculture Assistant loaded');
+            console.log('Backend API:', API_BASE);
+        };
+    </script>
+</body>
+</html>
