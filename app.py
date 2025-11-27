@@ -24,8 +24,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-OPENWEATHER_KEY = ""
-MISTRAL_API_KEY = ""
+OPENWEATHER_KEY = "Add your API Key"
+MISTRAL_API_KEY = "Add your API key"
 mistral_client = Mistral(api_key=MISTRAL_API_KEY)
 
 # Global variables for session data
@@ -689,4 +689,5 @@ def favicon():
 if __name__ == '__main__':
     # Create models directory if it doesn't exist
     os.makedirs('models', exist_ok=True)
+
     app.run(debug=True, port=5000)
